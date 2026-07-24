@@ -1,0 +1,63 @@
+name: Coverage Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Generate coverage report
+        run: |
+          docker run --rm \
+            --volume "$GITHUB_WORKSPACE:/workspace" \
+            --workdir /workspace \
+            zxilly/cangjie:1.1.3@sha256:542a2a41f25831cf3e95e6e046559b4c3a49a89686c4d191daa78d06dbd2ae1c \
+            bash -euo pipefail -c '
+              cjpm test --coverage --target-dir target-coverage
+              cjcov \
+                --root=. \
+                --source=src \
+                --exclude=src/aho_corasick_test.cj \
+                --html-details \
+                --output=coverage-site
+              rm \
+                coverage-site/cjcov_logs/cjcov.log \
+                coverage-site/cjcov_logs/gcov_parse.log
+              rmdir coverage-site/cjcov_logs
+              touch coverage-site/.nojekyll
+            '
+
+      - name: Configure Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Upload coverage report
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: coverage-site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0

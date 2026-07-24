@@ -1,0 +1,11 @@
+软件名称：aho-corasick
+上游版本：1.1.4（本地参考提交 c821786）
+上游仓库：https://github.com/BurntSushi/aho-corasick
+上游作者：Andrew Gallant
+上游许可证：MIT OR Unlicense
+本移植许可证：MIT
+版权声明：Copyright (c) 2015 Andrew Gallant
+
+本项目是对上游算法、公开匹配语义和公开功能层的纯仓颉重新实现；API 外形按仓颉语言习惯调整，不包含 Rust 编译制品或
+FFI 封装。
+许可证全文见 LICENSE；上游同时提供的 Unlicense 文本可在上游仓库中查阅。

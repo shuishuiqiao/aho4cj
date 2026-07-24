@@ -7,4 +7,4 @@ target-*/
 *.gcda
 *.gcno
 cov_output/
-doc/cjcov/cjcov_logs/
+coverage-site/
