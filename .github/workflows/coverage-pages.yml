@@ -16,7 +16,33 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  test:
+    name: Test Cangjie ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: 1.0.5 LTS
+            image: zxilly/cangjie:1.0.5@sha256:3d0b792712da2c9ac15e6a601b640d5d9acf5b57a0be260935045094fc0fb541
+          - name: 1.1.3 STS
+            image: zxilly/cangjie:1.1.3@sha256:542a2a41f25831cf3e95e6e046559b4c3a49a89686c4d191daa78d06dbd2ae1c
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Run tests
+        env:
+          CANGJIE_IMAGE: ${{ matrix.image }}
+        run: |
+          docker run --rm \
+            --volume "$GITHUB_WORKSPACE:/workspace" \
+            --workdir /workspace \
+            "$CANGJIE_IMAGE" \
+            cjpm test --target-dir target-test
+
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
