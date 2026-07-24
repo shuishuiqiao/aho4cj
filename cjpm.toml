@@ -1,10 +1,10 @@
 [package]
   cjc-version = "1.0.5"
   name = "aho4cj"
-  description = "nothing here"
-  version = "1.0.0"
+  description = "Aho-Corasick 多模式字符串搜索库的仓颉实现"
+  version = "0.1.0"
   target-dir = ""
-  output-type = "executable"
+  output-type = "static"
   compile-option = ""
   override-compile-option = ""
   link-option = ""
