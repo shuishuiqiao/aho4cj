@@ -8,3 +8,7 @@ target-*/
 *.gcno
 cov_output/
 coverage-site/
+benchmark-results/
+pages-site/
+__pycache__/
+*.pyc

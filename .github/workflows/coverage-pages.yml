@@ -1,4 +1,4 @@
-name: Coverage Pages
+name: Engineering Reports Pages
 
 on:
   push:
@@ -48,6 +48,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: Run Rust and Cangjie benchmarks
+        run: |
+          mkdir -p benchmark-results
+          docker run --rm \
+            --volume "$GITHUB_WORKSPACE:/workspace" \
+            --workdir /workspace/benchmark/rust \
+            rust:1.89-bookworm@sha256:948f9b08a66e7fe01b03a98ef1c7568292e07ec2e4fe90d88c07bb14563c84ff \
+            bash -euo pipefail -c '
+              CARGO_TARGET_DIR=/tmp/aho-rust-benchmark \
+                cargo run --release --locked > /workspace/benchmark-results/rust.csv
+            '
+          docker run --rm \
+            --volume "$GITHUB_WORKSPACE:/workspace" \
+            --workdir /workspace/benchmark/cangjie \
+            zxilly/cangjie:1.1.3@sha256:542a2a41f25831cf3e95e6e046559b4c3a49a89686c4d191daa78d06dbd2ae1c \
+            bash -euo pipefail -c '
+              cjpm build --target-dir /tmp/aho-cangjie-benchmark
+              /tmp/aho-cangjie-benchmark/release/bin/main \
+                > /workspace/benchmark-results/cangjie.csv
+            '
+          python3 benchmark/report.py \
+            benchmark-results/rust.csv \
+            benchmark-results/cangjie.csv \
+            pages-site/benchmark \
+            "$GITHUB_SHA"
+
       - name: Generate coverage report
         run: |
           docker run --rm \
@@ -61,13 +87,14 @@ jobs:
                 --source=src \
                 --exclude=src/aho_corasick_test.cj \
                 --html-details \
-                --output=coverage-site
+                --output=pages-site/coverage
               rm \
-                coverage-site/cjcov_logs/cjcov.log \
-                coverage-site/cjcov_logs/gcov_parse.log
-              rmdir coverage-site/cjcov_logs
-              touch coverage-site/.nojekyll
+                pages-site/coverage/cjcov_logs/cjcov.log \
+                pages-site/coverage/cjcov_logs/gcov_parse.log
+              rmdir pages-site/coverage/cjcov_logs
             '
+          cp benchmark/pages-index.html pages-site/index.html
+          touch pages-site/.nojekyll
 
       - name: Configure Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
@@ -75,7 +102,7 @@ jobs:
       - name: Upload coverage report
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: coverage-site
+          path: pages-site
 
   deploy:
     needs: build

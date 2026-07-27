@@ -1,15 +1,15 @@
 # aho4cj
 
 `aho4cj` 是 [BurntSushi/aho-corasick](https://github.com/BurntSushi/aho-corasick) 的纯仓颉移植，
-用于在一段文本中同时查找多个模式。库内部构建 Trie、失败指针和输出链，搜索阶段不会逐个模式扫描输入。
+用于在一段文本中同时查找多个模式。库内部构建 Trie、fail 指针和输出链，搜索阶段不会逐个模式扫描输入。
 
-当前版本已在仓颉 1.0.5 LTS 和 1.1.3 STS 工具链中完成构建与测试。项目不包含 FFI 和第三方运行时依赖。
+当前版本已在仓颉 1.0.5 LTS 和 1.1.3 STS 工具链中完成构建与测试。项目不包含 FFI 和第三方依赖。
 
 ## 功能
 
 - 标准 Aho-Corasick 多模式搜索
 - 非重叠搜索与重叠搜索
-- `Standard`、`LeftmostFirst`、`LeftmostLongest` 三种匹配语义
+- `Standard`、`LeftmostFirst`、`LeftmostLongest` 三种匹配
 - ASCII 忽略大小写匹配
 - 字符串、任意字节和回调替换
 - 空模式和重复模式
@@ -24,7 +24,7 @@
 - 基于 `InputStream`/`OutputStream` 的跨缓冲区搜索与替换
 - 自动机类型、内存估算、状态数和模式长度查询
 
-主要性能边界是 SIMD 预过滤：Rust 上游通过 `memchr` 使用平台向量指令，仓颉标准库目前没有等价的公开字节搜索接口。
+比 Rust 的实现慢主要是本 port 没做 SIMD。
 本项目使用专门化并展开的纯仓颉标量预过滤；同一稀疏字节基准约为 Rust 默认实现的 `2.68x`，且快于关闭预过滤的
 Rust 连续 NFA。详细数据见
 [性能基准](doc/benchmark.md)。
@@ -132,17 +132,9 @@ cjpm test
 - [设计说明](doc/design.md)
 - [功能与 API](doc/feature_api.md)
 - [性能基准](doc/benchmark.md)
+- [基准源码](benchmark/README.md)
 - [测试说明](test/README.md)
 - [变更日志](CHANGELOG.md)
-
-## 仓颉 AI 生态推荐
-
-- [CangjieSkills](https://gitcode.com/Cangjie-SIG/CangjieSkills)：面向 AI 开发工具的仓颉程序开发 Skills，覆盖项目创建、配置、开发、构建、运行和单元测试。
-- [ACEHarness](https://gitcode.com/Cangjie-SIG/ACEHarness)：面向工程任务的本地 AI Multi-Agent 协作平台，支持 Spec Driven Development、状态机工作流和 Supervisor 路由。
-- [CangjieCorpus](https://gitcode.com/Cangjie/CangjieCorpus)：面向 RAG 的仓颉语言知识基座，整合开发指南、API 文档、示例和语法规范。
-- [CangjieMagic](https://gitcode.com/Cangjie-TPC/CangjieMagic)：仓颉原生 LLM Agent 应用开发框架；示例见 [CangjieMagic-Examples](https://gitcode.com/Cangjie/CangjieMagic-Examples)。
-- [magic-cli](https://gitcode.com/Cangjie-SIG/magic-cli)：基于 Cangjie Agent DSL 和 CangjieMagic 的 AI 命令行助手。
-- [MagicExplorer](https://gitcode.com/Cangjie-TPC/MagicExplorer)：用于探索 Agent 开发与多 Agent 工程协作的示例应用。
 
 ## 许可证
 
