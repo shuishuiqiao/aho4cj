@@ -123,6 +123,11 @@ cjpm test
 测试覆盖三种运行时自动机、三种匹配策略、上游测试向量、穷举对照验证、锚定与范围搜索、重叠匹配顺序、ASCII 大小写、
 任意字节、空模式、回调替换、流式处理和异常分支。
 
+## 双版本维护
+
+`main` 保持对仓颉 1.0.5 LTS 的最低版本兼容，并同时通过 1.1.3 STS 测试。版本发布线分别为
+`aho4cj_lt_1.0.5` 和 `aho4cj_st_1.1.3`，详细规则见[双版本维护说明](doc/version-support.md)。
+
 ## 文档
 
 - [设计说明](doc/design.md)
@@ -130,3 +135,4 @@ cjpm test
 - [性能基准](doc/benchmark.md)
 - [基准源码](benchmark/README.md)
 - [测试说明](test/README.md)
+- [双版本维护](doc/version-support.md)
