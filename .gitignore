@@ -12,3 +12,4 @@ benchmark-results/
 pages-site/
 __pycache__/
 *.pyc
+cangjie-repo.toml

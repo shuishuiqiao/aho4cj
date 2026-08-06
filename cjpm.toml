@@ -1,10 +1,16 @@
 [package]
   cjc-version = "1.0.5"
   name = "aho4cj"
-  description = "Aho-Corasick 多模式字符串搜索库的仓颉实现"
+  description = "Aho-Corasick 多模式字符串搜索库的纯仓颉实现"
   version = "0.1.0"
   target-dir = ""
   output-type = "static"
+  repository = "https://gitcode.com/qiaoshui/aho4cj/"
+  homepage = "https://gitcode.com/qiaoshui/aho4cj/"
+  license = ["MIT"]
+  tag = ["aho-corasick", "search", "text"]
+  include = ["src", "doc", "test", "LICENSE"]
+  exclude = ["benchmark"]
   compile-option = ""
   override-compile-option = ""
   link-option = ""

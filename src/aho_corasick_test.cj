@@ -231,7 +231,7 @@ public class AhoCorasickTests {
 
     @TestCase
     public func anchoredOnlyRejectsUnanchoredInput(): Unit {
-        let ac = AhoCorasickBuilder().startKind(StartKind.Anchored).build(["a"])
+        let ac = AhoCorasickBuilder().startKind(StartKind.AnchoredOnly).build(["a"])
         @AssertThrows[MatchException](ac.find(Input("a")))
         assertSomeMatch(ac.find(Input("a").anchored(Anchored.Yes)), 0, 0, 1)
     }

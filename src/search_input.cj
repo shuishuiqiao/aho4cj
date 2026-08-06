@@ -10,7 +10,7 @@ public enum Anchored {
 public enum StartKind {
     | Both
     | Unanchored
-    | Anchored
+    | AnchoredOnly
 }
 
 /** 自动机的运行时存储类型。 */

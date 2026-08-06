@@ -8,7 +8,7 @@
 | `Match` | 模式编号及 `[start, end)` 字节区间 |
 | `Input` | 输入字节、搜索范围、锚定方式和最早匹配配置 |
 | `Anchored` | 单次搜索是否必须从 `Input.start` 开始匹配 |
-| `StartKind` | 自动机支持 `Unanchored`、`Anchored` 或 `Both` |
+| `StartKind` | 自动机支持 `Unanchored`、`AnchoredOnly` 或 `Both` |
 | `AhoCorasickKind` | `NoncontiguousNFA`、`ContiguousNFA` 或 `DFA` |
 | `OverlappingState` | 保存逐次重叠搜索的迭代状态 |
 | `MatchException` | 带稳定 `MatchErrorKind` 分类的搜索配置异常 |

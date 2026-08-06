@@ -1609,7 +1609,7 @@ func isStartUnanchored(kind: StartKind): Bool {
 
 func isStartAnchored(kind: StartKind): Bool {
     match (kind) {
-        case StartKind.Anchored => true
+        case StartKind.AnchoredOnly => true
         case _ => false
     }
 }

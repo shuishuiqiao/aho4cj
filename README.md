@@ -90,7 +90,7 @@ let matched = ac.find(input)
 ```
 
 `Input` 的搜索范围和 `Match` 的匹配范围均采用以字节为单位的半开区间。`StartKind.Unanchored` 是默认值；需要
-锚定查询时，应在构建时选择 `StartKind.Both` 或 `StartKind.Anchored`。
+锚定查询时，应在构建时选择 `StartKind.Both` 或 `StartKind.AnchoredOnly`。
 
 ## 替换
 
