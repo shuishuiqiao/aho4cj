@@ -412,19 +412,19 @@ public class AhoCorasick {
         return result.toArray()
     }
 
-    /** 使用默认 8 KiB 缓冲区流式查找 Standard 非重叠匹配。 */
+    /** 使用默认 8 KiB buffer 流式查找 Standard 非重叠匹配。 */
     public func streamFindIter(input: InputStream): StreamMatchIterator {
         return streamFindIter(input, 8192)
     }
 
-    /** 使用指定缓冲区大小流式查找 Standard 非重叠匹配。 */
+    /** 使用指定 buffer 大小流式查找 Standard 非重叠匹配。 */
     public func streamFindIter(input: InputStream, bufferSize: Int64): StreamMatchIterator {
         validateStreamConfiguration(bufferSize)
         let iteratorState = StreamIteratorState(input, bufferSize)
         return StreamMatchIterator({=> nextStreamMatch(iteratorState)})
     }
 
-    /** 使用默认 8 KiB 缓冲区执行流式字节替换。 */
+    /** 使用默认 8 KiB buffer 执行流式字节替换。 */
     public func streamReplaceAll(
         input: InputStream,
         output: OutputStream,
@@ -433,7 +433,7 @@ public class AhoCorasick {
         streamReplaceAll(input, output, replacements, 8192)
     }
 
-    /** 使用指定缓冲区大小执行流式字节替换。 */
+    /** 使用指定 buffer 大小执行流式字节替换。 */
     public func streamReplaceAll(
         input: InputStream,
         output: OutputStream,
@@ -1358,7 +1358,7 @@ public class AhoCorasick {
             )
         }
         if (bufferSize <= 0) {
-            throw IllegalArgumentException("流式缓冲区大小必须大于 0")
+            throw IllegalArgumentException("流式 buffer 大小必须大于 0")
         }
         if (emptyPatternIds.size > 0) {
             throw MatchException(MatchErrorKind.UnsupportedEmpty, "流式操作不支持空模式")

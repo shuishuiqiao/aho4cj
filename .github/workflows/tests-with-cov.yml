@@ -1,4 +1,4 @@
-name: Engineering Reports Pages
+name: Tests with coverage
 
 on:
   push:

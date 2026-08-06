@@ -4,16 +4,16 @@
 
 | 类型 | 作用 |
 |---|---|
-| `MatchKind` | `Standard`、`LeftmostFirst`、`LeftmostLongest` 三种选择语义 |
+| `MatchKind` | `Standard`、`LeftmostFirst`、`LeftmostLongest` 三种匹配策略 |
 | `Match` | 模式编号及 `[start, end)` 字节区间 |
-| `Input` | 输入字节、搜索范围、锚定和 earliest 配置 |
+| `Input` | 输入字节、搜索范围、锚定方式和最早匹配配置 |
 | `Anchored` | 单次搜索是否必须从 `Input.start` 开始匹配 |
 | `StartKind` | 自动机支持 `Unanchored`、`Anchored` 或 `Both` |
 | `AhoCorasickKind` | `NoncontiguousNFA`、`ContiguousNFA` 或 `DFA` |
 | `OverlappingState` | 保存逐次重叠搜索的迭代状态 |
 | `MatchException` | 带稳定 `MatchErrorKind` 分类的搜索配置异常 |
 | `AutomatonView` / `StateID` | 原始状态转移、状态属性与输出查询 |
-| `PackedSearcher` | 最多 128 个非空模式的独立左最搜索器 |
+| `PackedSearcher` | 最多 128 个非空模式的独立最左匹配搜索器 |
 
 `Match.start`、`Match.end`、`Span` 和 `Input.span` 全部使用半开字节偏移。字符串先编码为 UTF-8，因此中文字符通常占
 三个字节。
@@ -22,7 +22,7 @@
 
 | API | 默认值 | 说明 |
 |---|---|---|
-| `matchKind(MatchKind)` | `Standard` | 设置匹配选择语义 |
+| `matchKind(MatchKind)` | `Standard` | 设置匹配策略 |
 | `asciiCaseInsensitive(Bool)` | `false` | 仅折叠 ASCII `A-Z`/`a-z` |
 | `startKind(StartKind)` | `Unanchored` | 声明自动机支持的搜索起点模式 |
 | `kind(AhoCorasickKind)` | 自动选择 | 强制运行时存储类型 |
@@ -49,8 +49,9 @@
 | `findOverlapping` | `Option<Match>` | 配合 `OverlappingState` 逐次推进 |
 | `findOverlappingAll` | `Array<Match>` | 优化的批量重叠扫描 |
 
-`Input.earliest(true)` 忽略左最选择，允许在确定任意最早结束匹配时立即返回。搜索模式与构建时的 `StartKind` 不兼容、
-左最语义请求重叠结果等配置错误抛出 `MatchException`；普通参数越界仍抛出 `IllegalArgumentException`。
+`Input.earliest(true)` 忽略最左匹配策略，允许在确定任意最早结束匹配时立即返回。搜索方式与构建时的 `StartKind`
+不兼容、使用最左匹配策略请求重叠结果等配置错误会抛出 `MatchException`；普通参数越界仍抛出
+`IllegalArgumentException`。
 
 锚定输入不能传给重叠迭代器或批量收集接口；如需锚定重叠语义，应使用 `OverlappingState` 逐次调用
 `findOverlapping`。
@@ -72,12 +73,12 @@
 
 | API | 说明 |
 |---|---|
-| `streamFindIter(InputStream[, bufferSize])` | 固定缓冲区惰性搜索，支持跨读取边界匹配 |
+| `streamFindIter(InputStream[, bufferSize])` | 固定 buffer 惰性搜索，支持跨读取边界匹配 |
 | `streamReplaceAll(InputStream, OutputStream, replacements[, bufferSize])` | 固定替换数组 |
 | `streamReplaceAllWithBytes(InputStream, OutputStream, callback[, bufferSize])` | 回调替换 |
 | `streamReplaceAllWithBytesControlled(...)` | 可停止的回调替换，停止后原样复制剩余输入 |
 
-流式操作只支持 `MatchKind.Standard`、允许非锚定搜索的自动机和非空模式。缓冲区大小必须大于零。
+流式操作只支持 `MatchKind.Standard`、允许非锚定搜索的自动机和非空模式。buffer 大小必须大于零。
 
 ## Packed 搜索
 
@@ -99,7 +100,7 @@
 `maxPatternLength`、`configuredMatchKind` 和 `configuredStartKind`。`memoryUsage` 是自动机数组存储的近似字节数，
 用于比较配置，不表示进程完整堆占用。
 
-## 与 Rust 上游的边界
+## 与 Rust 上游的不同
 
 高层搜索、匹配选择、锚定范围、三种自动机、字节类、低层状态访问、packed 功能层、重叠状态、回调替换和流式处理均已
 移植。API 采用仓颉的 `Array`、`Option`、`Iterator` 和异常模型，不复制 Rust 的 trait、生命周期、泛型 `PatternID`、

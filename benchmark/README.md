@@ -1,13 +1,39 @@
 # 性能基准源码
 
-本目录保存 Rust 上游与 `aho4cj` 的同负载微基准驱动：
+本目录包含 Rust 上游与 `aho4cj` 的对比基准：
 
 - `rust/`：Rust `aho-corasick` 1.1.4，Rust 1.89，`opt-level = 2`。
 - `cangjie/`：当前工作树中的 `aho4cj`，Cangjie 1.1.3，`-O2`。
 - `report.py`：校验两端输入元数据并生成 HTML 对比报告。
 
-两端均预热 3 次，对 5 个样本取中位数；每个样本内部重复执行多次以降低计时分辨率和调度噪声。匹配结果会完整收集并
-计算校验和，避免编译器删除搜索过程。
+每项操作先预热 3 次，再采集 5 组结果并取中位数。输出的时间单位为纳秒，并按单次操作归一化。两端还会输出输入元数据、
+匹配数量和校验和，`report.py` 只在这些数据一致时生成报告。
 
-GitHub Actions 使用固定 digest 的 Rust 和仓颉镜像运行基准。原始 CSV 与 HTML 只发布到 Pages，不提交生成结果。
-共享 CI 主机适合发现数量级回归；需要精确比较时，应在固定频率、固定硬件的隔离环境中重复运行。
+## 本地复现
+
+在仓库根目录运行：
+
+```bash
+mkdir -p benchmark-results
+
+(
+  cd benchmark/rust
+  CARGO_TARGET_DIR=/tmp/aho4cj-rust-benchmark \
+    cargo run --release --locked > ../../benchmark-results/rust.csv
+)
+
+(
+  cd benchmark/cangjie
+  cjpm build --target-dir /tmp/aho4cj-cangjie-benchmark
+  /tmp/aho4cj-cangjie-benchmark/release/bin/main \
+    > ../../benchmark-results/cangjie.csv
+)
+
+python3 benchmark/report.py \
+  benchmark-results/rust.csv \
+  benchmark-results/cangjie.csv \
+  /tmp/aho4cj-benchmark-report \
+  local
+```
+
+持续集成使用固定 Docker 镜像运行相同步骤。最新结果由 GitHub Actions 生成并发布，不保存在仓库中。
