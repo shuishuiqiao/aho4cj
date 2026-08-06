@@ -14,7 +14,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: aho4cj-ci-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -44,6 +44,7 @@ jobs:
             cjpm test --target-dir target-test
 
   build:
+    if: github.ref == 'refs/heads/main'
     needs: test
     runs-on: ubuntu-latest
     steps:
